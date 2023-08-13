@@ -1,8 +1,10 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Image } from "react-native";
 import { useState } from "react";
-import { TouchableOpacity } from "react-native-web";
+import { Modal, TouchableOpacity } from "react-native-web";
 
+
+//comando para instalr fonte - npx expo install expo-font @expo-google-fonts/montserrat
 import {
   useFonts,
   Montserrat_700Bold,
@@ -13,8 +15,72 @@ export default function App() {
   let [PontuacaoJogador, setPontuacaoJogador] = useState(0);
   let [PontuacaoMaquina, setPontuacaoMaquina] = useState(0);
 
-  let SelecaoMaquina = 0;
-  let SelecaoJogador = 0;
+  const [imgJogador, setImgJogador] = useState(0);
+  const [imgOponente, setImgOponente] = useState(0);
+  const [modal, setModal] = useState(false);
+
+  function exibirImagem(valor) {
+    if (valor == 0) {
+      
+
+    } else if (valor == 1) {
+      return (
+        <Image
+          source={require("./assets/pedra.png")}
+          style={{ width: "25%", height: "37%" }}
+        />
+      );
+    } else if (valor == 2) {
+      return (
+        <Image
+        source={require("./assets/tesoura.png")}
+        style={{ width: "25%", height: "37%" }}
+      />
+      );
+    } else if (valor == 3) {
+      return (
+        <Image
+        source={require("./assets/tesoura.png")}
+        style={{ width: "25%", height: "37%" }}
+      />
+      );
+    }
+  }
+
+  function jogar(escolha) {
+    console.log(escolha);
+    setImgJogador(escolha);
+    let escolhaJogador = escolha;
+    let escolhaMaquina = Math.floor(Math.random() * 3) + 1;
+    console.log("Maquina:", escolhaMaquina);
+    setImgOponente(escolhaMaquina);
+
+    if (escolhaMaquina == escolhaJogador) {
+      setModal(true)
+      console.log("Empate") 
+  
+
+    } else if (
+      (escolhaMaquina == 1 && escolhaJogador == 2) ||
+      (escolhaMaquina == 2 && escolhaJogador == 3) ||
+      (escolhaMaquina == 3 && escolhaJogador == 1)
+    ) {
+      setPontuacaoJogador(PontuacaoJogador + 1);
+      console.log(escolhaJogador);
+      console.log(escolhaMaquina);
+      console.log("Ganhou");
+    } else if (escolhaMaquina == 1) {
+    } else if (escolhaJogador == 1 && escolhaMaquina == 2) {
+      setPontuacaoMaquina(PontuacaoMaquina + 1);
+      console.log("Perdeu");
+    } else if (escolhaJogador == 2 && escolhaMaquina == 3) {
+      setPontuacaoMaquina(PontuacaoMaquina + 1);
+      console.log("Perdeu");
+    } else if (escolhaJogador == 3 && escolhaMaquina == 1) {
+      setPontuacaoMaquina(PontuacaoMaquina + 1);
+      console.log("Perdeu");
+    }
+  }
 
   let resetaPartida = () => {
     console.log("Jogo resetado");
@@ -30,81 +96,6 @@ export default function App() {
   if (!fonteCarregada) {
     return <View />;
   }
-
-  let NovaPartida = () => {
-    SelecaoMaquina = Math.floor(Math.random() * 3) + 1;
-
-    console.log(SelecaoMaquina);
-  };
-
-  let Pedra = () => {
-    SelecaoJogador = 1;
-
-    if (SelecaoMaquina == 1) {
-      console.log("empate");
-      console.log("Pedra");
-    }
-
-    if (SelecaoMaquina == 2) {
-      console.log("perdeu");
-      console.log("Papel");
-
-      setPontuacaoMaquina(PontuacaoMaquina + 1);
-    }
-
-    if (SelecaoMaquina == 3) {
-      console.log("Ganhou");
-      console.log("Tesoura");
-
-      setPontuacaoJogador(PontuacaoJogador + 1);
-    }
-  };
-
-  let Papel = () => {
-    SelecaoJogador = 2;
-
-    if (SelecaoMaquina == 2) {
-      console.log("empate");
-      console.log("Papel");
-    }
-
-    if (SelecaoMaquina == 1) {
-      console.log("ganhou");
-      console.log("Pedra");
-
-      setPontuacaoJogador(PontuacaoJogador + 1);
-    }
-
-    if (SelecaoMaquina == 3) {
-      console.log("perdeu");
-      console.log("Tesoura");
-
-      setPontuacaoMaquina(PontuacaoMaquina + 1);
-    }
-  };
-
-  let Tesoura = () => {
-    SelecaoJogador = 3;
-
-    if (SelecaoMaquina == 3) {
-      console.log("empate");
-      console.log("Tesoura");
-    }
-
-    if (SelecaoMaquina == 2) {
-      console.log("ganhou");
-      console.log("Papel");
-
-      setPontuacaoJogador(PontuacaoJogador + 1);
-    }
-
-    if (SelecaoMaquina == 1) {
-      console.log("perdeu");
-      console.log("Pedra");
-
-      setPontuacaoMaquina(PontuacaoMaquina + 1);
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -201,20 +192,14 @@ export default function App() {
           alignItems: "center",
         }}
       >
-        <Image
-          source={require("./assets/caixa.png")}
-          style={{ width: "30%", height: "45%" }}
-        />
+        {exibirImagem(imgJogador)}
 
         <Image
           source={require("./assets/vs.png")}
-          style={{ width: "20%", height: "20%" }}
+          style={{ width: "25%", height: "25%" }}
         />
 
-        <Image
-          source={require("./assets/caixa.png")}
-          style={{ width: "30%", height: "45%" }}
-        />
+        {exibirImagem(imgOponente)}
       </View>
 
       <View
@@ -226,22 +211,6 @@ export default function App() {
           justifyContent: "center",
         }}
       >
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#cccccc",
-
-            borderRadius: 10,
-
-            width: "50%",
-
-            padding: 10,
-
-            BorderColor: "#000000",
-          }}
-          onPress={NovaPartida}
-        >
-          <Text style={{ textAlign: "center" }}>Nova Partida</Text>
-        </TouchableOpacity>
 
         <TouchableOpacity
           style={{
@@ -282,7 +251,7 @@ export default function App() {
 
             alignItems: "center",
           }}
-          onPress={Pedra}
+          onPress={() => jogar(1)}
         >
           <Image
             source={require("./assets/pedra.png")}
@@ -300,7 +269,7 @@ export default function App() {
 
             alignItems: "center",
           }}
-          onPress={Papel}
+          onPress={() => jogar(2)}
         >
           <Image
             source={require("./assets/papel.png")}
@@ -318,7 +287,7 @@ export default function App() {
 
             alignItems: "center",
           }}
-          onPress={Tesoura}
+          onPress={() => jogar(3)}
         >
           <Image
             source={require("./assets/tesoura.png")}
@@ -326,6 +295,17 @@ export default function App() {
           />
         </TouchableOpacity>
       </View>
+
+      <Modal visible={modal} transparent>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'column',  }}>
+          <View style={styles.modal}>
+            <Text style={styles.textModal}>Empate</Text>
+            <TouchableOpacity style={styles.btnModal} onPress={ () => setModal(false)}>
+              <Text style={styles.btnTextModal}>Voltar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       <StatusBar style="auto" />
     </View>
@@ -338,4 +318,38 @@ const styles = StyleSheet.create({
 
     backgroundColor: "#F18F01",
   },
+
+  modal: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white', 
+    width: 200, 
+    height: 150,
+    borderRadius: 50,
+
+  },
+
+  textModal: {
+    fontFamily: "MonteserratBold",
+    fontSize: 24,
+  },
+
+  btnModal: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 50,
+    borderRadius: 4,
+    elevation: 3,
+    border: 10,
+    borderRadius: 25,
+    backgroundColor: 'red'
+  
+  },
+
+  btnTextModal:{
+    fontFamily: "MonteserratBold",
+    fontSize: 20,
+    color: 'white',
+  }
 });
